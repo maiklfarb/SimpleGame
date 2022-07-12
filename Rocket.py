@@ -3,7 +3,7 @@ from pygame.sprite import Sprite
 class Rocket(Sprite):
     def __init__(self, screen, settings, image, spawnUp=False):
         super().__init__()
-        self.health = 5
+        self.health = 125
         self.screen = screen
         self.scrinRect = screen.get_rect()
         self.settings = settings
@@ -21,7 +21,7 @@ class Rocket(Sprite):
         self.isLeft = False
         self.isUp = False
         self.isDown = False
-    def Update(self):
+    def update(self):
         if self.isLeft and self.rect.left > 0:
             self.x -= self.settings.speed
         if self.isRight and self.rect.right < self.scrinRect.right:

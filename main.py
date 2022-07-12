@@ -22,10 +22,10 @@ class Two:
         # Создай объект Rocket и сохрани его в переменную класса
         self.ships = pygame.sprite.Group()
 
-        self.ship = Rocket(self.screen, self.settings, "1.png")
-        self.ships.add(self.ship)
-        self.ship2 = Rocket(self.screen,self.settings, "2.png", True)
-        self.ships.add(self.ship2)
+        ship = Rocket(self.screen, self.settings, "1.png")
+        self.ships.add(ship)
+        ship2 = Rocket(self.screen,self.settings, "2.png", True)
+        self.ships.add(ship2)
 
         # Контейнееры пуль для кораблей
         self.bullets = pygame.sprite.Group()
@@ -33,18 +33,18 @@ class Two:
 
     def Fire(self, _shipDown=True):
         if _shipDown == True:
-            bullet = Bullet(self.screen, self.settings, self.ship, _shipDown=_shipDown)
+            bullet = Bullet(self.screen, self.settings, self.ships.sprites()[0], _shipDown=_shipDown)
             self.bullets.add(bullet)
         else:
-            bullet = Bullet(self.screen, self.settings, self.ship2, _shipDown=_shipDown)
+            bullet = Bullet(self.screen, self.settings, self.ships.sprites()[1], _shipDown=_shipDown)
             self.bullets2.add(bullet)
 
     def FireMega(self):
         if len(self.bullets) < self.settings.MegaFireCount:
-            bullet = Bullet(self.screen, self.settings, self.ship)
+            bullet = Bullet(self.screen, self.settings, self.ships.sprites()[0])
             bullet.rect.width = 200
             bullet.rect.height = 5
-            bullet.rect.midbottom = self.ship.rect.midbottom
+            bullet.rect.midbottom = self.ships.sprites()[0].rect.midbottom
             bullet.bulletSpeed = 1.5
             self.bullets.add(bullet)
 
@@ -52,7 +52,7 @@ class Two:
         left = 5
         right = 0
         for i in range(0, n):
-            bullet = Bullet(self.screen, self.settings, self.ship)
+            bullet = Bullet(self.screen, self.settings, self.ships.sprites()[0])
 
             if i % 2 == 0:
                 bullet.rect.x += right
@@ -64,9 +64,9 @@ class Two:
             self.bullets.add(bullet)
 
     def FireSpread(self):
-        bulletCenter = Bullet(self.screen, self.settings, self.ship)
-        bulletRight = Bullet(self.screen, self.settings, self.ship, "right")
-        bulletLeft = Bullet(self.screen, self.settings, self.ship, "left")
+        bulletCenter = Bullet(self.screen, self.settings, self.ships.sprites()[0])
+        bulletRight = Bullet(self.screen, self.settings, self.ships.sprites()[0], "right")
+        bulletLeft = Bullet(self.screen, self.settings, self.ships.sprites()[0], "left")
 
         self.bullets.add(bulletCenter)
         self.bullets.add(bulletRight)
@@ -75,9 +75,9 @@ class Two:
     # Метод проверки нажатия клавиши
     def CheckDown(self, event):
         if event.key == pygame.K_RIGHT:
-            self.ship.isRight = True
+            self.ships.sprites()[0].isRight = True
         elif event.key == pygame.K_LEFT:
-            self.ship.isLeft = True
+            self.ships.sprites()[0].isLeft = True
         elif event.key == pygame.K_ESCAPE:
             sys.exit()
         elif event.key == pygame.K_KP_ENTER:
@@ -91,25 +91,25 @@ class Two:
         elif event.key == pygame.K_SPACE:
             self.Fire(False)
         elif event.key == pygame.K_d:
-            self.ship2.isRight = True
+            self.ships.sprites()[1].isRight = True
         elif event.key == pygame.K_a:
-            self.ship2.isLeft = True
+            self.ships.sprites()[1].isLeft = True
 
     def CheckUp(self,event):
         # Метод проверки отпускания клавиши
         if event.key == pygame.K_RIGHT:
-            self.ship.isRight = False
+            self.ships.sprites()[0].isRight = False
         elif event.key == pygame.K_LEFT:
-            self.ship.isLeft = False
+            self.ships.sprites()[0].isLeft = False
         elif event.key == pygame.K_UP:
-            self.ship.isUp = False
+            self.ships.sprites()[0].isUp = False
         elif event.key == pygame.K_DOWN:
-            self.ship.isDown = False
+            self.ships.sprites()[0].isDown = False
 
         elif event.key == pygame.K_d:
-            self.ship2.isRight = False
+            self.ships.sprites()[1].isRight = False
         elif event.key == pygame.K_a:
-            self.ship2.isLeft = False
+            self.ships.sprites()[1].isLeft = False
 
     def CheckEvent(self):
         for event in pygame.event.get():
@@ -123,8 +123,9 @@ class Two:
     def UpdateScreen(self):
         self.screen.fill(self.settings.colour)
 
-        self.ship.blitme()
-        self.ship2.blitme()
+        for ship in self.ships.sprites():
+            ship.blitme()
+
         for bullet in self.bullets2.sprites():
             bullet.blitme()
         for bullet in self.bullets.sprites():
@@ -136,8 +137,9 @@ class Two:
         # Бесконечно делаем
         while True:
             self.CheckEvent()
-            self.ship.Update()
-            self.ship2.Update()
+
+            self.ships.update()
+
             # Вызываем метод update у группы спрайтов
             self.bullets.update()
             self.bullets2.update()
@@ -150,13 +152,31 @@ class Two:
                 if bullet.rect.bottom >= self.screen.get_height():
                     self.bullets2.remove(bullet)
 
-            if pygame.sprite.spritecollideany(self.ship2, self.bullets):
-                print(len(self.ships))
-                if self.ship2.health >= 1:
-                    self.ship2.health -= 1
-                else:
-                    self.ships.remove(self.ship2)
-                    self.ship2.kill()
+            try:
+                if len(self.ships.sprites()) > 1:
+                    #print(pygame.sprite.spritecollide(self.ships.sprites()[1], self.bullets, True))
+
+                    damage1 = len(pygame.sprite.spritecollide(self.ships.sprites()[1], self.bullets, True))
+                    if damage1 > 0:
+                        #print(len(self.ships))
+                        print(f"Player 1: {self.ships.sprites()[1].health}")
+                        if self.ships.sprites()[1].health >= 1:
+                            self.ships.sprites()[1].health -= damage1
+                        else:
+                            self.ships.remove(self.ships.sprites()[1])
+
+                    damage2 = len(pygame.sprite.spritecollide(self.ships.sprites()[1], self.bullets, True))
+                    if damage2 > 0:
+                        #print(len(self.ships))
+                        print(f"Player 0: {self.ships.sprites()[0].health}")
+                        if self.ships.sprites()[0].health >= 1:
+                            self.ships.sprites()[0].health -= damage2
+                        else:
+                            self.ships.remove(self.ships.sprites()[0])
+            except IndexError:
+                print("Ошибка.")
+
+
 
 
 

@@ -10,7 +10,11 @@ class Bullet(Sprite):
         self.settings = settings
         self.screen = screen
         self.ship = ship
-        self.colour = self.settings.bullet_colour
+
+        if self._shipDown == True:
+            self.colour = self.settings.bullet_colour
+        else:
+            self.colour = self.settings.bullet_colour2
         self.rect = pygame.Rect(0, 0, self.settings.bullet_wight, self.settings.bullet_height)  # x, y, ширина, высота
 
         if self._shipDown == True:
