@@ -39,20 +39,33 @@ class Two:
             bullet = Bullet(self.screen, self.settings, self.ships.sprites()[1], _shipDown=_shipDown)
             self.bullets2.add(bullet)
 
-    def FireMega(self):
-        if len(self.bullets) < self.settings.MegaFireCount:
-            bullet = Bullet(self.screen, self.settings, self.ships.sprites()[0])
-            bullet.rect.width = 200
-            bullet.rect.height = 5
-            bullet.rect.midbottom = self.ships.sprites()[0].rect.midbottom
-            bullet.bulletSpeed = 1.5
-            self.bullets.add(bullet)
+    def FireMega(self,shipDown):
+        if shipDown == True:
+            if len(self.bullets) < self.settings.MegaFireCount:
+                bullet = Bullet(self.screen, self.settings, self.ships.sprites()[0], _shipDown=shipDown)
+                bullet.rect.width = 200
+                bullet.rect.height = 5
+                bullet.rect.midbottom = self.ships.sprites()[0].rect.midbottom
+                bullet.bulletSpeed = 1.5
+                self.bullets.add(bullet)
+        else:
+            if len(self.bullets2) < self.settings.MegaFireCount:
+                bullet = Bullet(self.screen, self.settings, self.ships.sprites()[1], _shipDown=shipDown)
+                bullet.rect.width = 200
+                bullet.rect.height = 5
+                bullet.rect.midbottom = self.ships.sprites()[1].rect.midbottom
+                bullet.bulletSpeed = 1.5
 
-    def FireMultiple(self, n):
+                self.bullets2.add(bullet)
+
+    def FireMultiple(self, n, shipDown):
         left = 5
         right = 0
         for i in range(0, n):
-            bullet = Bullet(self.screen, self.settings, self.ships.sprites()[0])
+            if shipDown == True:
+                bullet = Bullet(self.screen, self.settings, self.ships.sprites()[0], _shipDown=shipDown)
+            else:
+                bullet = Bullet(self.screen, self.settings, self.ships.sprites()[1], _shipDown=shipDown)
 
             if i % 2 == 0:
                 bullet.rect.x += right
@@ -61,16 +74,27 @@ class Two:
                 bullet.rect.x -= left
                 left += 5
 
-            self.bullets.add(bullet)
+            if shipDown == True:
+                self.bullets.add(bullet)
+            else:
+                self.bullets2.add(bullet)
 
-    def FireSpread(self):
-        bulletCenter = Bullet(self.screen, self.settings, self.ships.sprites()[0])
-        bulletRight = Bullet(self.screen, self.settings, self.ships.sprites()[0], "right")
-        bulletLeft = Bullet(self.screen, self.settings, self.ships.sprites()[0], "left")
+    def FireSpread(self, shipDown=True):
+        if shipDown == True:
+            bulletCenter = Bullet(self.screen, self.settings, self.ships.sprites()[0], _shipDown=shipDown)
+            bulletRight = Bullet(self.screen, self.settings, self.ships.sprites()[0], "right",_shipDown=shipDown)
+            bulletLeft = Bullet(self.screen, self.settings, self.ships.sprites()[0], "left",_shipDown=shipDown)
+            self.bullets.add(bulletCenter)
+            self.bullets.add(bulletRight)
+            self.bullets.add(bulletLeft)
+        else:
+            bulletCenter2 = Bullet(self.screen, self.settings, self.ships.sprites()[1],_shipDown=shipDown)
+            bulletRight2 = Bullet(self.screen, self.settings, self.ships.sprites()[1], "right",_shipDown=shipDown)
+            bulletLeft2 = Bullet(self.screen, self.settings, self.ships.sprites()[1], "left",_shipDown=shipDown)
 
-        self.bullets.add(bulletCenter)
-        self.bullets.add(bulletRight)
-        self.bullets.add(bulletLeft)
+            self.bullets2.add(bulletCenter2)
+            self.bullets2.add(bulletRight2)
+            self.bullets2.add(bulletLeft2)
 
     # Метод проверки нажатия клавиши
     def CheckDown(self, event):
@@ -83,17 +107,24 @@ class Two:
         elif event.key == pygame.K_KP_ENTER:
             self.Fire()
         elif event.key == pygame.K_KP0:
-            self.FireMultiple(11)
+            self.FireMultiple(11, True)
         elif event.key == pygame.K_KP1:
             self.FireSpread()
-        #elif event.key == pygame.K_SPACE:
-        #    self.FireMega()
         elif event.key == pygame.K_SPACE:
+            self.FireMega(True)
+        elif event.key == pygame.K_q:
             self.Fire(False)
+        elif event.key == pygame.K_z:
+            self.FireSpread(False)
         elif event.key == pygame.K_d:
             self.ships.sprites()[1].isRight = True
         elif event.key == pygame.K_a:
             self.ships.sprites()[1].isLeft = True
+        elif event.key == pygame.K_x:
+            self.FireMultiple(11,False)
+        elif event.key == pygame.K_c:
+            self.FireMega(False)
+
 
     def CheckUp(self,event):
         # Метод проверки отпускания клавиши
@@ -160,26 +191,21 @@ class Two:
                     if damage1 > 0:
                         #print(len(self.ships))
                         print(f"Player 1: {self.ships.sprites()[1].health}")
-                        if self.ships.sprites()[1].health >= 1:
-                            self.ships.sprites()[1].health -= damage1
+                        if self.ships.sprites()[1].health > 1:
+                            self.ships.sprites()[1].damage(damage1)
                         else:
                             self.ships.remove(self.ships.sprites()[1])
 
-                    damage2 = len(pygame.sprite.spritecollide(self.ships.sprites()[1], self.bullets, True))
+                    damage2 = len(pygame.sprite.spritecollide(self.ships.sprites()[0], self.bullets2, True))
                     if damage2 > 0:
-                        #print(len(self.ships))
+                        #print(len(self.ships))eq
                         print(f"Player 0: {self.ships.sprites()[0].health}")
-                        if self.ships.sprites()[0].health >= 1:
-                            self.ships.sprites()[0].health -= damage2
+                        if self.ships.sprites()[0].health > 1:
+                            self.ships.sprites()[0].damage(damage2)
                         else:
                             self.ships.remove(self.ships.sprites()[0])
             except IndexError:
                 print("Ошибка.")
-
-
-
-
-
 
             self.UpdateScreen()
 

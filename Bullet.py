@@ -15,11 +15,11 @@ class Bullet(Sprite):
             self.colour = self.settings.bullet_colour
         else:
             self.colour = self.settings.bullet_colour2
+
         self.rect = pygame.Rect(0, 0, self.settings.bullet_wight, self.settings.bullet_height)  # x, y, ширина, высота
 
         if self._shipDown == True:
             self.rect.midbottom = self.ship.rect.midtop
-
         else:
             self.rect.midtop = self.ship.rect.midbottom
 
