@@ -3,12 +3,12 @@ import pygame
 
 
 class Bullet(Sprite):
-    def __init__(self, screen, settings, ship, _type="default", _shipDown=True):
+    def __init__(self, game, ship, _type="default", _shipDown=True):
         super().__init__()
         self._shipDown = _shipDown
         self._type = _type
-        self.settings = settings
-        self.screen = screen
+        self.settings = game.settings
+        self.screen = game.screen
         self.ship = ship
 
         if self._shipDown == True:

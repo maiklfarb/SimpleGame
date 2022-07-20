@@ -33,16 +33,16 @@ class Two:
 
     def Fire(self, _shipDown=True):
         if _shipDown == True:
-            bullet = Bullet(self.screen, self.settings, self.ships.sprites()[0], _shipDown=_shipDown)
+            bullet = Bullet(self, self.ships.sprites()[0], _shipDown=_shipDown)
             self.bullets.add(bullet)
         else:
-            bullet = Bullet(self.screen, self.settings, self.ships.sprites()[1], _shipDown=_shipDown)
+            bullet = Bullet(self, self.ships.sprites()[1], _shipDown=_shipDown)
             self.bullets2.add(bullet)
 
     def FireMega(self,shipDown):
         if shipDown == True:
             if len(self.bullets) < self.settings.MegaFireCount:
-                bullet = Bullet(self.screen, self.settings, self.ships.sprites()[0], _shipDown=shipDown)
+                bullet = Bullet(self, self.ships.sprites()[0], _shipDown=shipDown)
                 bullet.rect.width = 200
                 bullet.rect.height = 5
                 bullet.rect.midbottom = self.ships.sprites()[0].rect.midbottom
@@ -50,7 +50,7 @@ class Two:
                 self.bullets.add(bullet)
         else:
             if len(self.bullets2) < self.settings.MegaFireCount:
-                bullet = Bullet(self.screen, self.settings, self.ships.sprites()[1], _shipDown=shipDown)
+                bullet = Bullet(self, self.ships.sprites()[1], _shipDown=shipDown)
                 bullet.rect.width = 200
                 bullet.rect.height = 5
                 bullet.rect.midbottom = self.ships.sprites()[1].rect.midbottom
@@ -63,9 +63,9 @@ class Two:
         right = 0
         for i in range(0, n):
             if shipDown == True:
-                bullet = Bullet(self.screen, self.settings, self.ships.sprites()[0], _shipDown=shipDown)
+                bullet = Bullet(self, self.ships.sprites()[0], _shipDown=shipDown)
             else:
-                bullet = Bullet(self.screen, self.settings, self.ships.sprites()[1], _shipDown=shipDown)
+                bullet = Bullet(self, self.ships.sprites()[1], _shipDown=shipDown)
 
             if i % 2 == 0:
                 bullet.rect.x += right
@@ -81,16 +81,16 @@ class Two:
 
     def FireSpread(self, shipDown=True):
         if shipDown == True:
-            bulletCenter = Bullet(self.screen, self.settings, self.ships.sprites()[0], _shipDown=shipDown)
-            bulletRight = Bullet(self.screen, self.settings, self.ships.sprites()[0], "right",_shipDown=shipDown)
-            bulletLeft = Bullet(self.screen, self.settings, self.ships.sprites()[0], "left",_shipDown=shipDown)
+            bulletCenter = Bullet(self, self.ships.sprites()[0], _shipDown=shipDown)
+            bulletRight = Bullet(self, self.ships.sprites()[0], "right",_shipDown=shipDown)
+            bulletLeft = Bullet(self, self.ships.sprites()[0], "left",_shipDown=shipDown)
             self.bullets.add(bulletCenter)
             self.bullets.add(bulletRight)
             self.bullets.add(bulletLeft)
         else:
-            bulletCenter2 = Bullet(self.screen, self.settings, self.ships.sprites()[1],_shipDown=shipDown)
-            bulletRight2 = Bullet(self.screen, self.settings, self.ships.sprites()[1], "right",_shipDown=shipDown)
-            bulletLeft2 = Bullet(self.screen, self.settings, self.ships.sprites()[1], "left",_shipDown=shipDown)
+            bulletCenter2 = Bullet(self, self.ships.sprites()[1],_shipDown=shipDown)
+            bulletRight2 = Bullet(self, self.ships.sprites()[1], "right",_shipDown=shipDown)
+            bulletLeft2 = Bullet(self, self.ships.sprites()[1], "left",_shipDown=shipDown)
 
             self.bullets2.add(bulletCenter2)
             self.bullets2.add(bulletRight2)
